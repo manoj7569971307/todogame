@@ -1,24 +1,39 @@
 import React, { useState, useEffect } from 'react';
+import './Todo.css'
 import axios from 'axios';
 
-function TodoApp() {
+function Todo() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
 
   useEffect(() => {
+    
       const fetchData=async ()=>{
-        const response=await axios.get("https://my-first-project-7e52e-default-rtdb.firebaseio.com/register.json")
+        try{
+          const response=await axios.get("https://my-first-project-7e52e-default-rtdb.firebaseio.com/register.json")
         const data=Object.entries(response.data).map(([id,task])=>({id,...task}) )
         console.log(data)
+      
         setTasks(data)
+
+        }
+        catch(error){
+          
+          console.log("error",error)
+        }
+         
         
       }
 
       fetchData() 
 
       const refresh=setInterval(()=>{
+         
+
         fetchData()
-      },1000)
+        
+
+      },5000)
 
       return ()=>{
         clearInterval(refresh)
@@ -32,8 +47,8 @@ const addTask=async ()=>{
     const dataFull={
       text:newTask,
     }
-    await axios.post("https://my-first-project-7e52e-default-rtdb.firebaseio.com/register.json",dataFull).then(
-      ()=>alert("submitted"))
+    await axios.post("https://my-first-project-7e52e-default-rtdb.firebaseio.com/register.json",dataFull)
+      
       setNewTask('')
 
   }
@@ -51,6 +66,7 @@ const deleteButton=async (id)=>{
         <input
           type="text"
           placeholder="Add a task"
+          value={newTask}
         
           onChange={(e) => setNewTask(e.target.value)}
         />
@@ -65,4 +81,4 @@ const deleteButton=async (id)=>{
   );
 }
 
-export default TodoApp;
+export default Todo;
